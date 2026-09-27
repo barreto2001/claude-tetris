@@ -36,3 +36,11 @@ Everything lives in `game.js` as top-level state and functions (no classes, no m
 - **Input**: a single `keydown` listener switches on `e.code` (arrows, `Space` for hard drop, `KeyX`/`ArrowUp` for rotate, `KeyP` for pause). Movement/rotation is ignored while `paused` or `gameOver`.
 
 Tunable constants at the top of `game.js`: `COLS`, `ROWS`, `BLOCK` (px per cell), `COLORS`, `LINE_SCORES`, initial `dropInterval`. If `COLS`/`ROWS`/`BLOCK` change, update the `<canvas id="board">` `width`/`height` in `index.html` to match (`COLS × BLOCK` and `ROWS × BLOCK`).
+
+## Branching model (Git Flow)
+
+- `main` — always deployable/stable.
+- `develop` — integration branch; base new work off this, not `main`.
+- `feature/<name>` — branched from `develop`, merged back into `develop` via PR.
+- `release/<version>` — branched from `develop` when preparing a release, merged into both `main` and `develop`.
+- `hotfix/<name>` — branched from `main` for urgent fixes, merged into both `main` and `develop`.
