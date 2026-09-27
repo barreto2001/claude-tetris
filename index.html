@@ -47,11 +47,43 @@
       <div class="overlay-box">
         <p id="overlay-title">GAME OVER</p>
         <p id="overlay-score"></p>
+
+        <div id="record-entry" class="hidden">
+          <p class="record-hint">¡Nuevo récord! Ingresa tu nombre:</p>
+          <input type="text" id="player-name" maxlength="12" placeholder="ANON" autocomplete="off" />
+          <button id="save-record-btn">Guardar</button>
+        </div>
+
+        <div id="overlay-records" class="records-block hidden">
+          <span class="label">TOP 5</span>
+          <ol id="overlay-top5" class="records-list"></ol>
+        </div>
+
         <button id="restart-btn">Reiniciar</button>
+      </div>
+    </div>
+
+    <div id="start-screen" class="overlay">
+      <div class="overlay-box">
+        <h1 id="start-title">TETRIS</h1>
+
+        <div class="records-block">
+          <span class="label">TOP 5</span>
+          <ol id="start-top5" class="records-list"></ol>
+        </div>
+
+        <div class="stats-block">
+          <span class="stat"><span class="label">MEJOR COMBO</span> <span id="start-best-combo" class="value">0</span></span>
+          <span class="stat"><span class="label">MÁX. LÍNEAS</span> <span id="start-max-lines" class="value">0</span></span>
+        </div>
+
+        <button id="play-btn">JUGAR</button>
+        <button id="reset-records-btn" class="secondary-btn">Resetear records</button>
       </div>
     </div>
   </div>
 
   <script src="game.js"></script>
+  <script src="records.js"></script>
 </body>
 </html>

@@ -43,6 +43,7 @@ const overlayScore = document.getElementById('overlay-score');
 const restartBtn = document.getElementById('restart-btn');
 
 let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
+let combo = 0, maxComboSession = 0, maxLinesAtOnce = 0;
 
 function createBoard() {
   return Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
@@ -110,7 +111,12 @@ function clearLines() {
     score += (LINE_SCORES[cleared] || 0) * level;
     level = Math.floor(lines / 10) + 1;
     dropInterval = Math.max(100, 1000 - (level - 1) * 90);
+    combo++;
+    maxComboSession = Math.max(maxComboSession, combo);
+    maxLinesAtOnce = Math.max(maxLinesAtOnce, cleared);
     updateHUD();
+  } else {
+    combo = 0;
   }
 }
 
@@ -226,6 +232,15 @@ function endGame() {
   overlayTitle.textContent = 'GAME OVER';
   overlayScore.textContent = `Puntuación: ${score.toLocaleString()}`;
   overlay.classList.remove('hidden');
+  if (window.RecordsAPI && typeof window.RecordsAPI.onGameOver === 'function') {
+    window.RecordsAPI.onGameOver({
+      score,
+      lines,
+      level,
+      maxCombo: maxComboSession,
+      maxLines: maxLinesAtOnce,
+    });
+  }
 }
 
 function togglePause() {
@@ -258,20 +273,30 @@ function loop(ts) {
   animId = requestAnimationFrame(loop);
 }
 
-function init() {
+let startLevel = 1; // nivel elegido para la PRÓXIMA partida
+
+function init(opts) {
+  const lvl = (opts && opts.level) || startLevel || 1;
   board = createBoard();
   score = 0;
   lines = 0;
-  level = 1;
+  level = lvl;
   paused = false;
   gameOver = false;
-  dropInterval = 1000;
+  dropInterval = Math.max(100, 1000 - (level - 1) * 90);
   dropAccum = 0;
   lastTime = performance.now();
+  combo = 0;
+  maxComboSession = 0;
+  maxLinesAtOnce = 0;
   next = randomPiece();
   spawn();
   updateHUD();
   overlay.classList.add('hidden');
+  const recordEntryEl = document.getElementById('record-entry');
+  const overlayRecordsEl = document.getElementById('overlay-records');
+  if (recordEntryEl) recordEntryEl.classList.add('hidden');
+  if (overlayRecordsEl) overlayRecordsEl.classList.add('hidden');
   cancelAnimationFrame(animId);
   animId = requestAnimationFrame(loop);
 }
@@ -301,6 +326,4 @@ document.addEventListener('keydown', e => {
   updateHUD();
 });
 
-restartBtn.addEventListener('click', init);
-
-init();
+restartBtn.addEventListener('click', () => init());
