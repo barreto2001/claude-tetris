@@ -4,7 +4,7 @@ const COLS = 10;
 const ROWS = 20;
 const BLOCK = 30;
 
-const COLORS = [
+let COLORS = [
   null,
   '#4dd0e1', // I - cyan
   '#ffd54f', // O - yellow
@@ -164,9 +164,25 @@ function updateHUD() {
   levelEl.textContent = level;
 }
 
-function drawBlock(context, x, y, colorIndex, size, alpha) {
+function getTheme() {
+  if (typeof window.getActiveTheme === 'function') {
+    const theme = window.getActiveTheme();
+    if (theme) return theme;
+  }
+  // skins.js failed to load or hasn't run yet: fall back to the
+  // built-in retro look driven directly by COLORS.
+  return { colors: COLORS, bg: '#1a1a25', grid: '#22222e' };
+}
+
+function drawBlock(context, x, y, colorIndex, size, alpha, theme) {
   if (!colorIndex) return;
-  const color = COLORS[colorIndex];
+  theme = theme || getTheme();
+  const colors = theme.colors || COLORS;
+  if (typeof theme.drawBlock === 'function') {
+    theme.drawBlock(context, x, y, colorIndex, size, alpha ?? 1, colors);
+    return;
+  }
+  const color = colors[colorIndex] || COLORS[colorIndex];
   context.globalAlpha = alpha ?? 1;
   context.fillStyle = color;
   context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
@@ -176,8 +192,9 @@ function drawBlock(context, x, y, colorIndex, size, alpha) {
   context.globalAlpha = 1;
 }
 
-function drawGrid() {
-  ctx.strokeStyle = '#22222e';
+function drawGrid(theme) {
+  theme = theme || getTheme();
+  ctx.strokeStyle = theme.grid || '#22222e';
   ctx.lineWidth = 0.5;
   for (let c = 1; c < COLS; c++) {
     ctx.beginPath();
@@ -195,35 +212,45 @@ function drawGrid() {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawGrid();
+  const theme = getTheme();
+  if (theme.bg) {
+    ctx.fillStyle = theme.bg;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+  drawGrid(theme);
 
   // board
   for (let r = 0; r < ROWS; r++)
     for (let c = 0; c < COLS; c++)
-      drawBlock(ctx, c, r, board[r][c], BLOCK);
+      drawBlock(ctx, c, r, board[r][c], BLOCK, undefined, theme);
 
   // ghost
   const gy = ghostY();
   for (let r = 0; r < current.shape.length; r++)
     for (let c = 0; c < current.shape[r].length; c++)
       if (current.shape[r][c])
-        drawBlock(ctx, current.x + c, gy + r, current.shape[r][c], BLOCK, 0.2);
+        drawBlock(ctx, current.x + c, gy + r, current.shape[r][c], BLOCK, 0.2, theme);
 
   // current piece
   for (let r = 0; r < current.shape.length; r++)
     for (let c = 0; c < current.shape[r].length; c++)
-      drawBlock(ctx, current.x + c, current.y + r, current.shape[r][c], BLOCK);
+      drawBlock(ctx, current.x + c, current.y + r, current.shape[r][c], BLOCK, undefined, theme);
 }
 
 function drawNext() {
   const NB = 30;
   nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+  const theme = getTheme();
+  if (theme.bg) {
+    nextCtx.fillStyle = theme.bg;
+    nextCtx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
+  }
   const shape = next.shape;
   const offX = Math.floor((4 - shape[0].length) / 2);
   const offY = Math.floor((4 - shape.length) / 2);
   for (let r = 0; r < shape.length; r++)
     for (let c = 0; c < shape[r].length; c++)
-      drawBlock(nextCtx, offX + c, offY + r, shape[r][c], NB);
+      drawBlock(nextCtx, offX + c, offY + r, shape[r][c], NB, undefined, theme);
 }
 
 function endGame() {
