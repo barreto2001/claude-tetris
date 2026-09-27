@@ -322,3 +322,82 @@ kbd {
 #save-record-btn:hover {
   background: #a5d6a7;
 }
+
+/* ---- Pause menu ---- */
+.pause-box {
+  min-width: 200px;
+}
+
+#pause-title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: #7aa2f7;
+}
+
+.pause-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.pause-panel.hidden {
+  display: none;
+}
+
+.pause-option {
+  background: #22223a;
+  color: #e0e0e0;
+  border: 1px solid #3a3a5a;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  font-family: inherit;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.pause-option:hover,
+.pause-option:focus {
+  background: #2f2f4a;
+  border-color: #7aa2f7;
+  outline: none;
+}
+
+.pause-level {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.pause-level label {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #888;
+}
+
+.pause-hint {
+  font-size: 10px;
+  color: #666;
+}
+
+#pause-controls ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+#pause-controls li {
+  font-size: 13px;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}

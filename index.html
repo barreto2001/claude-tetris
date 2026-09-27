@@ -81,9 +81,39 @@
         <button id="reset-records-btn" class="secondary-btn">Resetear records</button>
       </div>
     </div>
+
+    <div id="pause-menu" class="overlay hidden">
+      <div class="overlay-box pause-box">
+        <p id="pause-title">PAUSA</p>
+
+        <div id="pause-main" class="pause-panel">
+          <button class="pause-option" data-action="resume">Reanudar</button>
+          <button class="pause-option" data-action="restart">Reiniciar</button>
+          <button class="pause-option" data-action="controls">Ver controles</button>
+
+          <div class="pause-level">
+            <label for="start-level-select">Nivel inicial</label>
+            <select id="start-level-select" class="pause-option"></select>
+            <span class="pause-hint">Se aplica al reiniciar</span>
+          </div>
+        </div>
+
+        <div id="pause-controls" class="pause-panel hidden">
+          <ul>
+            <li><kbd>&larr;</kbd><kbd>&rarr;</kbd> mover</li>
+            <li><kbd>&uarr;</kbd> rotar</li>
+            <li><kbd>&darr;</kbd> bajar</li>
+            <li><kbd>Space</kbd> caída</li>
+            <li><kbd>P</kbd> / <kbd>Esc</kbd> pausa</li>
+          </ul>
+          <button class="pause-option" data-action="back">Volver</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="game.js"></script>
   <script src="records.js"></script>
+  <script src="pause-menu.js"></script>
 </body>
 </html>
